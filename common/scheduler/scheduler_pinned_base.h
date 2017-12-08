@@ -4,11 +4,11 @@
 #include "scheduler_dynamic.h"
 #include "simulator.h"
 
-#define MY_APPS_COUNT 6 //32 //6	//2	//javad
+#define MY_APPS_COUNT 6       //javad
 
 class SchedulerPinnedBase : public SchedulerDynamic
 {
-   public:
+    public:
       SchedulerPinnedBase(ThreadManager *thread_manager, SubsecondTime quantum);
 
       virtual core_id_t threadCreate(thread_id_t);
@@ -22,30 +22,30 @@ class SchedulerPinnedBase : public SchedulerDynamic
       virtual void threadResume(thread_id_t thread_id, thread_id_t thread_by, SubsecondTime time);
       virtual void threadExit(thread_id_t thread_id, SubsecondTime time);
 
-   protected:
+    protected:
       class ThreadInfo
       {
-         public:
+          public:
             ThreadInfo()
-               : m_has_affinity(false)
-               , m_explicit_affinity(false)
-               , m_core_affinity(Sim()->getConfig()->getApplicationCores(), false)
-               , m_core_running(INVALID_CORE_ID)
-               , m_last_scheduled_in(SubsecondTime::Zero())
-               , m_last_scheduled_out(SubsecondTime::Zero())
-            {}
+                : m_has_affinity(false), m_explicit_affinity(false), m_core_affinity(Sim()->getConfig()->getApplicationCores(), false), m_core_running(INVALID_CORE_ID), m_last_scheduled_in(SubsecondTime::Zero()), m_last_scheduled_out(SubsecondTime::Zero())
+            {
+            }
             /* affinity */
             void clearAffinity()
             {
-               for(auto it = m_core_affinity.begin(); it != m_core_affinity.end(); ++it)
-                  *it = false;
+                  for (auto it = m_core_affinity.begin(); it != m_core_affinity.end(); ++it)
+                        *it = false;
             }
             void setAffinitySingle(core_id_t core_id)
             {
-               clearAffinity();
-               addAffinity(core_id);
+                  clearAffinity();
+                  addAffinity(core_id);
             }
-            void addAffinity(core_id_t core_id) { m_core_affinity[core_id] = true; m_has_affinity = true; }
+            void addAffinity(core_id_t core_id)
+            {
+                  m_core_affinity[core_id] = true;
+                  m_has_affinity = true;
+            }
             bool hasAffinity(core_id_t core_id) const { return m_core_affinity[core_id]; }
             String getAffinityString() const;
             /* running on core */
@@ -60,7 +60,7 @@ class SchedulerPinnedBase : public SchedulerDynamic
             void setLastScheduledOut(SubsecondTime time) { m_last_scheduled_out = time; }
             SubsecondTime getLastScheduledIn() const { return m_last_scheduled_in; }
             SubsecondTime getLastScheduledOut() const { return m_last_scheduled_out; }
-         private:
+          private:
             bool m_has_affinity;
             bool m_explicit_affinity;
             std::vector<bool> m_core_affinity;
@@ -85,27 +85,25 @@ class SchedulerPinnedBase : public SchedulerDynamic
       void reschedule(SubsecondTime time, core_id_t core_id, bool is_periodic);
       void printState();
 
-	/*Javad variables declared*/
+      /*Javad variables declared*/
+      
       bool first_timex[MY_APPS_COUNT];
-
-      // bool first_time1;
-      // bool first_time2;
 
       int start_cyclesx[MY_APPS_COUNT];
 
       int blacklist_candidate;
 
-	double MyPower;	//instantaneous power
-	double MyPowerThreshold;	//the maximum allowed power of the system
-	double MyLastPower;	//to identify the power changes
+      double MyPower;          //instantaneous power
+      double MyPowerThreshold; //the maximum allowed power of the system
+      double MyLastPower;      //to identify the power changes
 
       int MyAppsCount;
-      int MyHasStarted[MY_APPS_COUNT];	//whether app is started yet or not
-      int MyHasEnded[MY_APPS_COUNT];	//whether app is ended yet or not
-	int MyAppsKickPriority[MY_APPS_COUNT];	//which app which is run on big core is candidate to be moved to little one -- the recent one
+      int MyHasStarted[MY_APPS_COUNT];       //whether app is started yet or not
+      int MyHasEnded[MY_APPS_COUNT];         //whether app is ended yet or not
+      int MyAppsKickPriority[MY_APPS_COUNT]; //which app which is run on big core is candidate to be moved to little one -- the recent one
 
-	int MyIsBig[MY_APPS_COUNT];	//app is big core or little core
-	int MyPowerBlackList[MY_APPS_COUNT];	//the flag of app which violates the power and is moved to little one, will get 1
+      int MyIsBig[MY_APPS_COUNT];          //app is big core or little core
+      int MyPowerBlackList[MY_APPS_COUNT]; //the flag of app which violates the power and is moved to little one, will get 1
 
       int MyQosValues[MY_APPS_COUNT];
       int MyCurrentAppFreq[MY_APPS_COUNT];
@@ -115,16 +113,13 @@ class SchedulerPinnedBase : public SchedulerDynamic
 
       int MyDvfsEnabled;
       int MyMigrationEnabled;
-		
-	//void SchedulerPinnedBase::MyUpdatePower(void);
-	void MyUpdatePower();	//read the power values through McPAT and update power values
+
+      void MyUpdatePower(); //read the power values through McPAT and update power values
       void MyThreadsStateManager();
       void MyAppsDeparture();
       void MyPowerEvents(SubsecondTime);
 
-
       /*Javad variables declared*/
-
 };
 
 #endif // __SCHEDULER_PINNED_BASE_H
